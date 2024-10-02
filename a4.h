@@ -6,6 +6,6 @@ typedef struct _node {
     struct _node *next;
 } node;
 
-node *openWindow(node *head, int window);
-node *switchWindow(node *head, int window);
-node *closeWindow(node *head, int window);
+void openWindow(node **head, int window);
+void switchWindow(node **head, int window);
+void closeWindow(node **head, int window);

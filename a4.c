@@ -1,59 +1,48 @@
 #include "a4.h"
 
-node *openWindow (node *head, int window) {
+void openWindow (node **head, int window) {
     // Create new node
     node *new_node = (node *)malloc(sizeof(node));
     new_node->window = window;
 
     // Insert node into end of list
     if (head == NULL) new_node->next = NULL;
-    else new_node->next = head;
-    return (new_node);
+    else new_node->next = *head;
+    *head = new_node;
 }
 
-node *switchWindow (node *start, int window) {
-    node *head = start;
-    node *curr = start;
-    node *prev = start;
-
+void switchWindow (node **head, int window) {
     // Already at head
-    if (head->window == window) return(head); 
+    if ((*head)->window == window) return; 
 
     // Go to the window that needs to be moved up
-    while (curr != NULL) {
-        if (curr->window == window) {
-            prev->next = curr->next;
-            curr->next = head;
-            return(curr);
-        }
-        else {
-            prev = curr;
-            curr = curr->next;
-        }
-    }
-    
+    node *curr = *head;
+    while (curr->next != NULL && curr->next->window != window) curr = curr->next;
+
+    // Move window to the head of the list
+    node *temp = curr->next;
+    curr->next = curr->next->next;
+    temp->next = *head;
+    *head = temp;
 }
 
-node *closeWindow (node *start, int window) {
-    
-    node *head = start;
-    node *curr = start;
-    node *prev = start;
+void closeWindow (node **head, int window) {
+    // If head is closed
+    node *curr = *head;
+    if (curr != NULL && curr->window == window) {
+        *head = curr->next;
+        free(curr);
+        return;
+    }
 
-    while (curr != NULL) {
-        if (head->window == window) {
-            head = curr->next;
-            free(curr);
-            break;
-        }
-        if (curr->window == window) {
-            prev->next = curr->next;
-            free(curr);
-            break;
-        }
+    // Go to node to be closed
+    node *prev ;
+    while (curr->next != NULL && curr->window != window) { 
         prev = curr;
         curr = curr->next;
     }
-    return(head);
 
+    // Delete the node
+    prev->next = curr->next;
+    free(curr);
 }
